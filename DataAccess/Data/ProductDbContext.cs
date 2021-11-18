@@ -9,7 +9,7 @@ namespace DataAccess.Data
 {
     public class ProductDbContext:DbContext
     {
-        public ProductDbContext(DbContextOptions<DbContext> opt):base(opt)
+        public ProductDbContext(DbContextOptions<ProductDbContext> opt):base(opt)
         {
 
         }

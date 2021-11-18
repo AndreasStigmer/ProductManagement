@@ -1,0 +1,95 @@
+﻿@page "/products/create"
+@page "/products/edit/{productid:int}"
+@inject IProductRepository prodrepo
+@inject IJSRuntime jsruntime
+@inject NavigationManager navman;
+
+<div class="row mt-4">
+    <h3 class="text-info">@Title Product</h3>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <EditForm Model="ProductModel" OnValidSubmit="OnSaveClick">
+                    <DataAnnotationsValidator></DataAnnotationsValidator>
+
+                    <div class="form-group">
+                        <label>Name</label>
+                        <InputText class="form-control" @bind-Value="ProductModel.Name"></InputText>
+                    </div>
+                    <div class="form-group">
+                        <label>Price</label>
+                        <InputNumber class="form-control" @bind-Value="ProductModel.Price"></InputNumber>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Is Active</label>
+                        <InputCheckbox class="form-check"   @bind-Value="ProductModel.isActive"></InputCheckbox>
+                    </div>
+                    <div class="form-group">
+                        <label>Details</label>
+                        <InputTextArea class="form-control" @bind-Value="ProductModel.Details"></InputTextArea>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary">Save</button>
+                        <NavLink href="/products" class="btn btn-secondary">Back to list</NavLink>
+
+                    </div>
+
+                </EditForm>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+
+    public ProductDTO ProductModel { get; set; } = new ProductDTO();
+
+    public string Title { get; set; } = "Create";
+
+    [Parameter]
+    public int ProductId { get; set; }
+
+
+
+    protected async Task OnSaveClick()
+    {
+        if(ProductModel.Id!=0 && Title!="Create")
+        {
+            var obj=await prodrepo.UpdateProduct(ProductModel);
+
+
+        }
+        else
+        {
+            var obj=await prodrepo.CreateProduct(ProductModel);
+
+            if (obj == null)
+            {
+                await jsruntime.InvokeVoidAsync("ShowToast", "error", "Product could not be saved");
+            }
+            else
+            {
+
+                navman.NavigateTo("/products/Saved");
+            }
+        }
+    }
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        if(ProductId!=0)
+        {
+            Title = "Edit";
+            ProductModel = await prodrepo.GetProduct(ProductId);
+        }
+
+
+    }
+
+
+
+}

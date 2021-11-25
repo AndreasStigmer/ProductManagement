@@ -15,6 +15,8 @@ namespace DataAccess.Data
         }
 
         public DbSet<Product> Products { get; set; }
+
+        public DbSet<ProductImage> Images { get; set; }
         public DbSet<ProductProperty> Properties { get; set; }
     }
 }

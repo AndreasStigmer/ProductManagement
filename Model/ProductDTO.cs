@@ -18,5 +18,7 @@ namespace Model
         public bool isActive { get; set; }
         public string Details { get; set; }
         public virtual List<ProductPropertyDTO> Properties { get; set; } = new List<ProductPropertyDTO>();
+
+        public virtual List<ProductImageDTO> Images { get; set; } = new List<ProductImageDTO>();
     }
 }

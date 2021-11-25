@@ -13,5 +13,10 @@ namespace ProdMan_server.Helpers
         {
             await runtime.InvokeVoidAsync("ShowToast", "success", message);
         }
+
+        public async static Task ErrorToastr(this IJSRuntime runtime, string message)
+        {
+            await runtime.InvokeVoidAsync("ShowToast", "error", message);
+        }
     }
 }

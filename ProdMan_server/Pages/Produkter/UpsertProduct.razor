@@ -1,8 +1,12 @@
 ﻿@page "/products/create"
 @page "/products/edit/{productid:int}"
+@using Services
+@using System.IO
 @inject IProductRepository prodrepo
 @inject IJSRuntime jsruntime
-@inject NavigationManager navman;
+@inject NavigationManager navman
+@inject IFilemanager filemanager 
+@inject IProductImageRepository imgrepo
 
 <div class="row mt-4">
     <h3 class="text-info">@Title Product</h3>
@@ -24,12 +28,35 @@
 
                     <div class="form-group">
                         <label>Is Active</label>
-                        <InputCheckbox class="form-check"   @bind-Value="ProductModel.isActive"></InputCheckbox>
+                        <InputCheckbox class="form-check" @bind-Value="ProductModel.isActive"></InputCheckbox>
                     </div>
                     <div class="form-group">
                         <label>Details</label>
                         <InputTextArea class="form-control" @bind-Value="ProductModel.Details"></InputTextArea>
                     </div>
+
+                    <div class="form-group">
+                        <InputFile  OnChange="HandleFileUpload" multiple></InputFile>
+                        <div class="row">
+                            
+                            @{ var index = 1;}
+                            @foreach(var image in Urls) {
+                            <div class="col-md-2 mt-3 ">
+                                <div class="product-image-display" style="background:url('@image')">
+
+                                    <span class="product-image-tag">@index</span>
+                                </div>
+                                
+                                <button @onclick="()=>DeleteImage(image)" class="btn btn-block btn-outline-danger">Delete</button>
+                            </div>
+                               
+                                index++;
+                            }
+
+                        </div>
+
+                    </div>
+
                     <div class="form-group">
                         <button class="btn btn-primary">Save</button>
                         <NavLink href="/products" class="btn btn-secondary">Back to list</NavLink>
@@ -53,19 +80,44 @@
     [Parameter]
     public int ProductId { get; set; }
 
+    public List<string> Urls { get; set; } = new List<string>();
 
+
+    private async Task HandleFileUpload(InputFileChangeEventArgs arg)
+    {
+        string[] extensions = new string[] { ".png", ".jpg", ".jpeg" };
+
+        foreach(var item in arg.GetMultipleFiles())
+        {
+            FileInfo fi = new FileInfo(item.Name);
+
+            if(extensions.Any(k=>k==fi.Extension.ToLower()))
+            {
+                var imgurl= await filemanager.SaveFile(item);
+                if(imgurl!=null)
+                {
+                    Urls.Add(imgurl);
+                }
+            }else
+            {
+                //show error
+            }
+
+        }
+    }
 
     protected async Task OnSaveClick()
     {
         if(ProductModel.Id!=0 && Title!="Create")
         {
+
             var obj=await prodrepo.UpdateProduct(ProductModel);
-
-
+            await AddImageToProduct(obj);
         }
         else
         {
             var obj=await prodrepo.CreateProduct(ProductModel);
+            await AddImageToProduct(obj);
 
             if (obj == null)
             {
@@ -79,6 +131,23 @@
         }
     }
 
+    private async Task AddImageToProduct(ProductDTO dto)
+    {
+        foreach(var img in Urls)
+        {
+            if(!ProductModel.Images.Any(i=>i.Url==img))
+            {
+                await imgrepo.AddProductImage(new ProductImageDTO() { ProductId = dto.Id, Url = img });
+            }
+
+        }
+
+    }
+
+    private async Task DeleteImage(string filename) { 
+        ProductModel.Images.Any()
+    }
+
 
     protected async override Task OnInitializedAsync()
     {
@@ -86,6 +155,7 @@
         {
             Title = "Edit";
             ProductModel = await prodrepo.GetProduct(ProductId);
+            Urls = ProductModel.Images.Select(i => i.Url).ToList();
         }
 
 

@@ -48,3 +48,20 @@ a, .btn-link {
         right: 0.75rem;
         top: 0.5rem;
     }
+
+.product-image-display {
+    position: relative;
+    display: block;
+    height: 150px;
+    border: 1px solid limegreen;
+    width: 100%;
+    background-size: cover !important;
+}
+    .product-image-tag {
+        position:absolute;
+        top:0;
+        right:0;
+        padding: 0px 6px;
+        background-color:limegreen;
+        color:white;
+    }

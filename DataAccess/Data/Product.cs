@@ -24,6 +24,7 @@ namespace DataAccess.Data
         public string UpdatedBy { get; set; }
         public DateTime UpdatedDate { get; set; } = System.DateTime.Now;
 
+        public virtual List<ProductImage> Images { get; set; } = new List<ProductImage>();
         public virtual List<ProductProperty> Properties { get; set; } = new List<ProductProperty>();
     }
 }

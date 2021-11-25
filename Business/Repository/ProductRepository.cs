@@ -42,12 +42,12 @@ namespace Business.Repository
 
         public async Task<IEnumerable<ProductDTO>> GetAllProducts()
         {
-            return mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(await db.Products.ToListAsync());
+            return mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(await db.Products.Include(p => p.Images).ToListAsync());
         }
 
         public async Task<ProductDTO> GetProduct(int productid)
         {
-            var prod = await db.Products.FirstOrDefaultAsync(p=>p.Id==productid);
+            var prod = await db.Products.Include(p=>p.Images).FirstOrDefaultAsync(p=>p.Id==productid);
             var dto = mapper.Map<Product, ProductDTO>(prod);
             return dto;
 
@@ -58,9 +58,17 @@ namespace Business.Repository
             throw new NotImplementedException();
         }
 
-        public Task<ProductDTO> UpdateProduct(ProductDTO item)
+        public async Task<ProductDTO> UpdateProduct(ProductDTO item)
         {
-            throw new NotImplementedException();
+            Product p = db.Products.Include(p=>p.Images).FirstOrDefault(p => p.Id == item.Id);
+
+            p.Name = item.Name;
+            p.isActive = item.isActive;
+            p.Price = item.Price;
+
+            var obj = db.Entry<Product>(p).State = EntityState.Modified;
+            await db.SaveChangesAsync();
+            return mapper.Map<Product,ProductDTO>(p);
         }
     }
 }

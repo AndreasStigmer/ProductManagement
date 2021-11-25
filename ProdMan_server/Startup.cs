@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Business.Repository;
+using ProdMan_server.Services;
 
 namespace ProdMan_server
 {
@@ -34,6 +35,8 @@ namespace ProdMan_server
             services.AddDbContext<ProductDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IProductImageRepository, ProductImageRepository>();
+            services.AddScoped<IFilemanager, Filemanager>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();

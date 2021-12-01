@@ -1,0 +1,39 @@
+﻿<!-- Modal -->
+<div class="modal fade" id="deleteConfirmationModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Delete Confirmation</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+               Du you want to delete?
+            </div>
+            <div class="modal-footer">
+                <button type="button" @onclick="CancelClick" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" @onclick="ConfirmClick" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [Parameter]
+    public  EventCallback<bool> OnConfirm { get; set; }
+    
+    [Parameter]
+    public  EventCallback OnCancel { get; set; }
+
+    public async Task CancelClick()
+    {
+        await  OnCancel.InvokeAsync();
+    }
+
+    public async Task ConfirmClick()
+    {
+        await OnConfirm.InvokeAsync(true);
+    }
+}

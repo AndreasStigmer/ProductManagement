@@ -35,14 +35,20 @@ namespace Business.Repository
             }
         }
 
-        public Task<int> DeleteProduct(int id)
+        public async Task<int> DeleteProduct(int id)
         {
-            throw new NotImplementedException();
+            if(id!=0)
+            {
+                var prod = await db.Products.FirstOrDefaultAsync(p => p.Id == id);
+                db.Products.Remove(prod);
+                return await db.SaveChangesAsync();
+            }
+            return -1;
         }
 
-        public async Task<IEnumerable<ProductDTO>> GetAllProducts()
+        public async Task<ICollection<ProductDTO>> GetAllProducts()
         {
-            return mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(await db.Products.Include(p => p.Images).ToListAsync());
+            return mapper.Map<ICollection<Product>, ICollection<ProductDTO>>(await db.Products.Include(p => p.Images).ToListAsync());
         }
 
         public async Task<ProductDTO> GetProduct(int productid)

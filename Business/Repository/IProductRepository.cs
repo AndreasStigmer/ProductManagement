@@ -11,7 +11,7 @@ namespace Business.Repository
     {
 
         public Task<ProductDTO> GetProduct(int productid);
-        public Task<IEnumerable<ProductDTO>> GetAllProducts();
+        public Task<ICollection<ProductDTO>> GetAllProducts();
         public Task<ProductDTO> CreateProduct(ProductDTO item);
         public Task<ProductDTO> UpdateProduct(ProductDTO item);
         public Task<int>DeleteProduct(int id);

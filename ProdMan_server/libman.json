@@ -7,8 +7,13 @@
       "destination": "wwwroot/lib/toastr.js/"
     },
     {
-      "library": "jquery@2.2.0",
-      "destination": "wwwroot/lib/jquery/"
+      "library": "jquery@3.6.0",
+      "destination": "wwwroot/jquery/"
     }
-  ]
+  ,
+{
+  "library": "bootstrap@4.6.1",
+  "destination": "wwwroot/bootstrap/"
+}
+]
 }

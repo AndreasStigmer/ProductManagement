@@ -11,7 +11,7 @@ namespace Business.Repository
     {
 
         public Task<int> AddProductImage(ProductImageDTO image);
-        public Task<int> RemoveImageById(int imageid);
+        public Task<int> RemoveImageByName(string imageid);
         public Task<int> RemoveImageByProductId(int productid);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DataAccess.Data;
+using Microsoft.EntityFrameworkCore;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -32,14 +33,31 @@ namespace Business.Repository
             }
         }
 
-        public Task<int> RemoveImageById(int imageid)
+        public async Task<int> RemoveImageByName(string filename)
         {
-            throw new NotImplementedException();
+            if(filename != null)
+            {
+                var image = await db.Images.FirstOrDefaultAsync(i => i.Url == filename);
+                if(image!=null) { 
+                    db.Images.Remove(image);
+                    return await db.SaveChangesAsync();
+                }else
+                {
+                    return -1;
+                }
+            }
+            return -1;
         }
 
-        public Task<int> RemoveImageByProductId(int productid)
+        public async Task<int> RemoveImageByProductId(int productid)
         {
-            throw new NotImplementedException();
+            if (productid != 0)
+            {
+                var images = db.Images.Where(i => i.ProductId == productid);
+                db.Images.RemoveRange(images);
+                return await db.SaveChangesAsync();
+            }
+            return -1;
         }
     }
 }

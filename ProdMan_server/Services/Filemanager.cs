@@ -25,7 +25,12 @@ namespace ProdMan_server.Services
 
         public bool DeleteFile(string filename)
         {
-            throw new NotImplementedException();
+           if(File.Exists(RootPhysicalPath+filename))
+            {
+                File.Delete(RootPhysicalPath + filename);
+                return true;
+            }
+            return false;
         }
 
         public async Task<string> SaveFile(IBrowserFile file)

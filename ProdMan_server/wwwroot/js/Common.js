@@ -5,3 +5,10 @@
         toastr.error(message, "Operation failed!");
     }
 }
+
+function showDeleteConfirm() {
+    $("#deleteConfirmationModal").modal('show')
+}
+function hideDeleteConfirm() {
+    $("#deleteConfirmationModal").modal('hide')
+}

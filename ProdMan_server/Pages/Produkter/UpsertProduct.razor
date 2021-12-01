@@ -2,6 +2,7 @@
 @page "/products/edit/{productid:int}"
 @using Services
 @using System.IO
+@using Helpers
 @inject IProductRepository prodrepo
 @inject IJSRuntime jsruntime
 @inject NavigationManager navman
@@ -58,7 +59,7 @@
                     </div>
 
                     <div class="form-group">
-                        <button class="btn btn-primary">Save</button>
+                        <button  class="btn btn-primary @(IsLoading? "disabled":"")">Save</button>
                         <NavLink href="/products" class="btn btn-secondary">Back to list</NavLink>
 
                     </div>
@@ -82,9 +83,12 @@
 
     public List<string> Urls { get; set; } = new List<string>();
 
+    public bool IsLoading { get; set; } = true;
+
 
     private async Task HandleFileUpload(InputFileChangeEventArgs arg)
     {
+        IsLoading = true;
         string[] extensions = new string[] { ".png", ".jpg", ".jpeg" };
 
         foreach(var item in arg.GetMultipleFiles())
@@ -104,15 +108,19 @@
             }
 
         }
+        IsLoading = false;
+        await jsruntime.SuccessToastr("Image was uploaded and saved");
     }
 
     protected async Task OnSaveClick()
     {
+        IsLoading = true;
         if(ProductModel.Id!=0 && Title!="Create")
         {
 
             var obj=await prodrepo.UpdateProduct(ProductModel);
             await AddImageToProduct(obj);
+            await jsruntime.SuccessToastr("Product was updated");
         }
         else
         {
@@ -121,7 +129,7 @@
 
             if (obj == null)
             {
-                await jsruntime.InvokeVoidAsync("ShowToast", "error", "Product could not be saved");
+                await jsruntime.ErrorToastr("Object was not saved du to an error");
             }
             else
             {
@@ -129,23 +137,42 @@
                 navman.NavigateTo("/products/Saved");
             }
         }
+        IsLoading = false;
     }
 
     private async Task AddImageToProduct(ProductDTO dto)
     {
+
         foreach(var img in Urls)
         {
             if(!ProductModel.Images.Any(i=>i.Url==img))
             {
-                await imgrepo.AddProductImage(new ProductImageDTO() { ProductId = dto.Id, Url = img });
-            }
+                var newdto = new ProductImageDTO() { ProductId = dto.Id, Url = img };
+                await imgrepo.AddProductImage(newdto);
+                ProductModel.Images.Add(newdto);
+                await jsruntime.SuccessToastr("An image was added to the product");
+            }else
+            {
 
+            }
         }
+
 
     }
 
-    private async Task DeleteImage(string filename) { 
-        ProductModel.Images.Any()
+    private async Task DeleteImage(string filename)
+    {
+        IsLoading = true;
+        var newFilename = filename.Replace("/ProdImages/", "");
+        filemanager.DeleteFile(newFilename);
+        await jsruntime.SuccessToastr("File was removed from disk");
+        Urls.Remove(filename);
+        if (ProductModel.Images.Any(p => p.Url == filename)) {
+            await imgrepo.RemoveImageByName(filename);
+            await jsruntime.SuccessToastr("The image was removed from the product");
+        }
+        IsLoading = false;
+
     }
 
 
@@ -157,6 +184,7 @@
             ProductModel = await prodrepo.GetProduct(ProductId);
             Urls = ProductModel.Images.Select(i => i.Url).ToList();
         }
+        IsLoading = false;
 
 
     }

@@ -2,8 +2,10 @@
 @page "/products/{function}"
 @using Helpers
 @inject IProductRepository prodrepo
-
 @inject IJSRuntime jsruntime
+
+@attribute [Authorize(Roles = "Admin,Employee")]
+
 <div class="row mt-4">
 
     <div class="col-md-9">

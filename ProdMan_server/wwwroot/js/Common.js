@@ -12,3 +12,10 @@ function showDeleteConfirm() {
 function hideDeleteConfirm() {
     $("#deleteConfirmationModal").modal('hide')
 }
+
+function showSignoutConfirm() {
+    $("#confirmSignOut").appendTo("body").modal('show')
+}
+function hideSignoutConfirm() {
+    $("#confirmSignOut").modal('hide')
+}

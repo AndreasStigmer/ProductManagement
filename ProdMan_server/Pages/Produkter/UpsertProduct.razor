@@ -6,8 +6,10 @@
 @inject IProductRepository prodrepo
 @inject IJSRuntime jsruntime
 @inject NavigationManager navman
-@inject IFilemanager filemanager 
+@inject IFilemanager filemanager
 @inject IProductImageRepository imgrepo
+
+@attribute [Authorize(Roles ="Admin")]
 
 <div class="row mt-4">
     <h3 class="text-info">@Title Product</h3>
@@ -37,20 +39,21 @@
                     </div>
 
                     <div class="form-group">
-                        <InputFile  OnChange="HandleFileUpload" multiple></InputFile>
+                        <InputFile OnChange="HandleFileUpload" multiple></InputFile>
                         <div class="row">
-                            
-                            @{ var index = 1;}
-                            @foreach(var image in Urls) {
-                            <div class="col-md-2 mt-3 ">
-                                <div class="product-image-display" style="background:url('@image')">
 
-                                    <span class="product-image-tag">@index</span>
+                            @{ var index = 1;}
+                            @foreach (var image in Urls)
+                            {
+                                <div class="col-md-2 mt-3 ">
+                                    <div class="product-image-display" style="background:url('@image')">
+
+                                        <span class="product-image-tag">@index</span>
+                                    </div>
+
+                                    <button @onclick="()=>DeleteImage(image)" class="btn btn-block btn-outline-danger">Delete</button>
                                 </div>
-                                
-                                <button @onclick="()=>DeleteImage(image)" class="btn btn-block btn-outline-danger">Delete</button>
-                            </div>
-                               
+
                                 index++;
                             }
 
@@ -59,7 +62,7 @@
                     </div>
 
                     <div class="form-group">
-                        <button  class="btn btn-primary @(IsLoading? "disabled":"")">Save</button>
+                        <button class="btn btn-primary @(IsLoading? "disabled":"")">Save</button>
                         <NavLink href="/products" class="btn btn-secondary">Back to list</NavLink>
 
                     </div>
@@ -91,18 +94,19 @@
         IsLoading = true;
         string[] extensions = new string[] { ".png", ".jpg", ".jpeg" };
 
-        foreach(var item in arg.GetMultipleFiles())
+        foreach (var item in arg.GetMultipleFiles())
         {
             FileInfo fi = new FileInfo(item.Name);
 
-            if(extensions.Any(k=>k==fi.Extension.ToLower()))
+            if (extensions.Any(k => k == fi.Extension.ToLower()))
             {
-                var imgurl= await filemanager.SaveFile(item);
-                if(imgurl!=null)
+                var imgurl = await filemanager.SaveFile(item);
+                if (imgurl != null)
                 {
                     Urls.Add(imgurl);
                 }
-            }else
+            }
+            else
             {
                 //show error
             }
@@ -115,16 +119,16 @@
     protected async Task OnSaveClick()
     {
         IsLoading = true;
-        if(ProductModel.Id!=0 && Title!="Create")
+        if (ProductModel.Id != 0 && Title != "Create")
         {
 
-            var obj=await prodrepo.UpdateProduct(ProductModel);
+            var obj = await prodrepo.UpdateProduct(ProductModel);
             await AddImageToProduct(obj);
             await jsruntime.SuccessToastr("Product was updated");
         }
         else
         {
-            var obj=await prodrepo.CreateProduct(ProductModel);
+            var obj = await prodrepo.CreateProduct(ProductModel);
             await AddImageToProduct(obj);
 
             if (obj == null)
@@ -143,15 +147,16 @@
     private async Task AddImageToProduct(ProductDTO dto)
     {
 
-        foreach(var img in Urls)
+        foreach (var img in Urls)
         {
-            if(!ProductModel.Images.Any(i=>i.Url==img))
+            if (!ProductModel.Images.Any(i => i.Url == img))
             {
                 var newdto = new ProductImageDTO() { ProductId = dto.Id, Url = img };
                 await imgrepo.AddProductImage(newdto);
                 ProductModel.Images.Add(newdto);
                 await jsruntime.SuccessToastr("An image was added to the product");
-            }else
+            }
+            else
             {
 
             }
@@ -167,7 +172,8 @@
         filemanager.DeleteFile(newFilename);
         await jsruntime.SuccessToastr("File was removed from disk");
         Urls.Remove(filename);
-        if (ProductModel.Images.Any(p => p.Url == filename)) {
+        if (ProductModel.Images.Any(p => p.Url == filename))
+        {
             await imgrepo.RemoveImageByName(filename);
             await jsruntime.SuccessToastr("The image was removed from the product");
         }
@@ -178,7 +184,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        if(ProductId!=0)
+        if (ProductId != 0)
         {
             Title = "Edit";
             ProductModel = await prodrepo.GetProduct(ProductId);

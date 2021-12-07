@@ -1,0 +1,16 @@
+﻿@page
+@inject SignInManager<IdentityUser> signinManager
+
+
+@functions {
+
+    public async Task<IActionResult> OnGet()
+    {
+        if(signinManager.IsSignedIn(User))
+        {
+            await signinManager.SignOutAsync();
+        }
+
+        return Redirect("/");
+    }
+}

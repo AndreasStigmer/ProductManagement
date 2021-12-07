@@ -28,5 +28,15 @@ namespace ProdMan_server.Helpers
         {
             await runtime.InvokeVoidAsync("hideDeleteConfirm");
         }
+
+        public async static Task ShowSignoutConfirmation(this IJSRuntime runtime)
+        {
+            await runtime.InvokeVoidAsync("showSignoutConfirm");
+        }
+
+        public async static Task HideSignoutConfirmation(this IJSRuntime runtime)
+        {
+            await runtime.InvokeVoidAsync("hideSignoutConfirm");
+        }
     }
 }

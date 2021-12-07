@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Data
 {
-    public class ProductDbContext:DbContext
+    public class ProductDbContext:IdentityDbContext
     {
         public ProductDbContext(DbContextOptions<ProductDbContext> opt):base(opt)
         {
@@ -15,7 +16,6 @@ namespace DataAccess.Data
         }
 
         public DbSet<Product> Products { get; set; }
-
         public DbSet<ProductImage> Images { get; set; }
         public DbSet<ProductProperty> Properties { get; set; }
     }

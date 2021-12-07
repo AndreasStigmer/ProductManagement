@@ -1,0 +1,26 @@
+﻿@using Helpers 
+@inject IJSRuntime jsRuntime
+
+<AuthorizeView>
+    <NotAuthorized>
+        <a href="/Identity/Account/Login">Sign in</a>
+        <a href="/Identity/Account/Register">Register</a>
+    </NotAuthorized>
+    <Authorized>
+        <a @onclick="HandleSignoutClick" href="#">Sign out</a>
+        <LogoutConfirm OnCancel="OnCancelClick"></LogoutConfirm>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+
+    private async Task HandleSignoutClick()
+    {
+        await jsRuntime.ShowSignoutConfirmation();
+    }
+
+    public async Task OnCancelClick()
+    {
+        await jsRuntime.HideSignoutConfirmation();
+    }
+}

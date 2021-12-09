@@ -1,5 +1,6 @@
 using Business.Repository;
 using DataAccess.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,10 +11,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ProdMan_WEBAPI.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace ProdMan_WEBAPI
@@ -32,7 +36,7 @@ namespace ProdMan_WEBAPI
         {
 
             //Data
-            services.AddDbContext<ProductDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+            services.AddDbContext<ProductDbContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -42,6 +46,31 @@ namespace ProdMan_WEBAPI
                 .AddEntityFrameworkStores<ProductDbContext>();
 
             //API SecurityConfiguration
+            var appSection = Configuration.GetSection("APISettings");
+            services.Configure<APISettings>(appSection);
+
+            var apiSettings = appSection.Get<APISettings>();
+            var key = new SymmetricSecurityKey( Encoding.UTF8.GetBytes(apiSettings.SecretKey) );
+
+            services.AddAuthentication(opt => {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(opt=> {
+                opt.RequireHttpsMetadata = false;
+                opt.SaveToken = true;
+                opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+
+                    ValidAudience = apiSettings.ValidAudience,
+                    ValidIssuer = apiSettings.ValidIssuer,
+                    IssuerSigningKey = key
+
+                };
+            });
 
             //Authentication Management/Config
            
@@ -68,6 +97,9 @@ namespace ProdMan_WEBAPI
 
             app.UseHttpsRedirection();
 
+            app.UseCors(opt => opt.AllowAnyMethod().AllowAnyOrigin().AllowAnyHeader());
+
+            app.UseAuthentication();
             app.UseRouting();
 
             app.UseAuthorization();

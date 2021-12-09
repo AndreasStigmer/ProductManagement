@@ -16,6 +16,6 @@ namespace Model
 
         public int ProductId { get; set; }
 
-        public ProductDTO  Product { get; set; }
+        
     }
 }

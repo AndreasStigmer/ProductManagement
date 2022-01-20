@@ -64,7 +64,6 @@ namespace ProdMan_WEBAPI
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateIssuerSigningKey = true,
-
                     ValidAudience = apiSettings.ValidAudience,
                     ValidIssuer = apiSettings.ValidIssuer,
                     IssuerSigningKey = key

@@ -1,0 +1,70 @@
+﻿@page "/"
+@inject HttpClient client
+@inject ILocalStorageService lstorage
+@inject IProductService service 
+
+
+
+<div class="container mydiv mt-100">
+    <div class="row">
+        
+        @foreach(var prod in Products) {
+        <div class="col-md-4">
+           <div class="card">
+               <div class="card-header"><h4>@prod.Name</h4></div>
+               <div class="card-card-body">
+                   <img 
+                src="@("https://localhost:5001/"+@prod?.Images?.FirstOrDefault()?.Url)"
+                alt="@prod.Name"
+                class="img-fluid" />
+
+               </div>
+               <div class="card-footer">
+
+                   <a class="btn btn-outline-info ms-2" href="/products/product-detail/@prod.Id">View</a>
+                   <button class="btn btn-outline-primary">
+                       <i class="fa fa-shopping-cart"></i>&nbsp;<span>Add to Cart</span>
+                   </button>
+               </div>
+               
+             </div>
+        </div>
+        }
+    </div>
+</div>
+
+
+
+
+@code{
+
+    public List<ProductDTO> Products { get; set; } = new List<ProductDTO>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Products.Count < 1)
+        {
+            Products = await service.GetProducts();
+            
+            /*var data = await GetProductsFromStorage();
+            if(data==null) {
+
+
+                await StoreProducts(Products);
+            }else
+            {
+                Products = data;
+            }*/
+        }
+    }
+    /*
+    private async Task StoreProducts(List<ProductDTO> prods)
+    {
+        await lstorage.SetItemAsync<List<ProductDTO>>("products", prods);
+    }
+    private async Task<List<ProductDTO>> GetProductsFromStorage()
+    {
+        return await lstorage.GetItemAsync<List<ProductDTO>>("products")??null;
+    }
+    */
+}

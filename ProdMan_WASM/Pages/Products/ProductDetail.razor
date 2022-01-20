@@ -1,0 +1,81 @@
+﻿@page "/Products/product-detail/{id:int}"
+@using ProdMan_WASM.Commerce
+@inject IProductService productService
+
+@if (Product == null)
+{
+    <Spinner></Spinner>
+}
+else
+{
+
+    <div class="container mt-100">
+        <div class="row">
+            <div class="col-md-6">
+                <!--image-->
+                <img src="@("https://localhost:5001/"+@Product?.Images?.FirstOrDefault()?.Url)"
+                     alt="@Product.Name"
+                     class="img-fluid" />
+
+            </div>
+            <div class="col-md-6">
+                <!--prodinfo-->
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>@Product.Name</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>@Product.Details</p>
+                    </div>
+                </div>
+                
+                <!--Price-->
+                <div class="row">
+                    <div class="col-md-12 bottom-rule">
+                        <h4 class="product-price">SEK @Product.Price</h4>
+                    </div>
+                </div>
+
+                <div class="row">
+
+
+                    <div class="col-md-4">
+                        <button class="btn btn-primary">
+                            <i class="fa fa-shopping-cart"></i>&nbsp;<span>Add to Cart</span>
+                        </button>
+
+                    </div>
+                </div>
+
+            </div><!-- end row -->
+        </div>
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+    public string Stat { get; set; }
+
+    public ProductDTO Product { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Stat = "Loading";
+        if (Id > 0)
+        {
+
+
+            Product = await productService.GetProduct(Id);
+
+
+        }
+
+    }
+}

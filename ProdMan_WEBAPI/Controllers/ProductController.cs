@@ -17,11 +17,12 @@ namespace ProdMan_WEBAPI.Controllers
 
         public ProductController(IProductRepository prodRepo)
         {
+           
             this.prodRepo = prodRepo;
         }
 
         [HttpGet]
-        [Authorize(Roles ="Customer")]
+       
         public async Task<IActionResult> GetProducts()
         {
          

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.31727.386
+VisualStudioVersion = 16.0.32106.194
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProdMan_server", "ProdMan_server\ProdMan_server.csproj", "{0A80EF22-F95F-42FD-A159-43F8B88D3F1B}"
 EndProject
@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Busine
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{07A63E1A-F5B7-4F96-9E54-5BE11E8C5328}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProdMan_WEBAPI", "ProdMan_WEBAPI\ProdMan_WEBAPI.csproj", "{442DF73C-F32B-4218-B281-02C90156A294}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProdMan_WEBAPI", "ProdMan_WEBAPI\ProdMan_WEBAPI.csproj", "{442DF73C-F32B-4218-B281-02C90156A294}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProdMan_WASM", "ProdMan_WASM\ProdMan_WASM.csproj", "{30C7E513-E260-46BD-AF53-0889E432736C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{442DF73C-F32B-4218-B281-02C90156A294}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{442DF73C-F32B-4218-B281-02C90156A294}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{442DF73C-F32B-4218-B281-02C90156A294}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30C7E513-E260-46BD-AF53-0889E432736C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30C7E513-E260-46BD-AF53-0889E432736C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30C7E513-E260-46BD-AF53-0889E432736C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30C7E513-E260-46BD-AF53-0889E432736C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

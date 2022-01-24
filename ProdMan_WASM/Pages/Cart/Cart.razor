@@ -1,0 +1,78 @@
+﻿@page "/Cart"
+@using ProdMan_WASM.Models
+@inject ICartService cartservice
+@inject IProductService productservice
+
+
+<div style="margin-top:20px" class="row">
+    <h2>Cart</h2>
+</div>
+@if (CartItems == null)
+{
+    <Spinner></Spinner>
+}
+else
+{
+
+   
+    @foreach(var item in CartItems)
+                {
+
+            <div class="row">
+                <div class="col-md-2">
+                    <img style="max-width:60px"  src="@("https://localhost:5001/"+item.ImageUrl)" />
+                </div>
+                <div class="col-md-1">
+                    <input class="form-control" @onchange="(arg)=>ChangeQty(item, Convert.ToInt32(arg.Value))" value="@item.Quantity" />
+                </div>
+                <div class="col-md-7">
+                    <h4>@item.Name</h4>
+                    <span>Price: @item.Price</span>
+                </div>
+                <div class="col-md-2">
+                    <button @onclick="()=>RemoveItem(item)" class="btn btn-outline-danger">
+                        <i class="fa fa-trash"></i>
+                    Remove</button>
+                </div>
+
+            </div>
+
+                }
+    <hr />
+    <div class="row">
+        <div class="col-md-7 offset-2">
+            <div class="d-flex align-content-end">
+                Total:
+            </div>
+        </div>
+        <div class="col-md-2">
+            @(CartItems.Select(ci=>ci.Price*ci.Quantity).Sum())
+        </div>
+    </div>
+}
+
+
+@code {
+    public List<CartItem> CartItems { get; set; }
+
+    public void ChangeQty(CartItem item, int qty)
+    {
+        cartservice.ChangeQty(item, qty);
+    }
+
+    public async Task RemoveItem(CartItem item)
+    {
+        await cartservice.RemoveItem(item);
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        CartItems = await cartservice.GetCartItems();
+        cartservice.OnChange += async () =>
+        {
+            CartItems = await cartservice.GetCartItems();
+            StateHasChanged();
+        };
+
+    }
+}

@@ -1,34 +1,39 @@
 ﻿@page "/"
+@using AutoMapper
+@using Models
+@using ProdMan_WASM.Commerce
 @inject HttpClient client
 @inject ILocalStorageService lstorage
-@inject IProductService service 
+@inject IProductService service
+@inject IMapper mapper
+@inject ICartService cartService 
 
 
 
 <div class="container mydiv mt-100">
     <div class="row">
-        
-        @foreach(var prod in Products) {
-        <div class="col-md-4">
-           <div class="card">
-               <div class="card-header"><h4>@prod.Name</h4></div>
-               <div class="card-card-body">
-                   <img 
-                src="@("https://localhost:5001/"+@prod?.Images?.FirstOrDefault()?.Url)"
-                alt="@prod.Name"
-                class="img-fluid" />
 
-               </div>
-               <div class="card-footer">
+        @foreach (var prod in Products)
+        {
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header"><h4>@prod.Name</h4></div>
+                    <div class="card-card-body">
+                        <img src="@("https://localhost:5001/"+@prod?.Images?.FirstOrDefault()?.Url)"
+                             alt="@prod.Name"
+                             class="img-fluid" />
 
-                   <a class="btn btn-outline-info ms-2" href="/products/product-detail/@prod.Id">View</a>
-                   <button class="btn btn-outline-primary">
-                       <i class="fa fa-shopping-cart"></i>&nbsp;<span>Add to Cart</span>
-                   </button>
-               </div>
-               
-             </div>
-        </div>
+                    </div>
+                    <div class="card-footer">
+
+                        <a class="btn btn-outline-info ms-2" href="/products/product-detail/@prod.Id">View</a>
+                        <button @onclick="()=>AddToCart(prod)" class="btn btn-outline-primary">
+                            <i class="fa fa-shopping-cart"></i>&nbsp;<span>Add to Cart</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
         }
     </div>
 </div>
@@ -45,7 +50,7 @@
         if (Products.Count < 1)
         {
             Products = await service.GetProducts();
-            
+
             /*var data = await GetProductsFromStorage();
             if(data==null) {
 
@@ -56,6 +61,13 @@
                 Products = data;
             }*/
         }
+    }
+
+    private async Task AddToCart(ProductDTO prod)
+    {
+        var cartitem = mapper.Map<ProductDTO, CartItem>(prod);
+        await cartService.AddToCart(cartitem);
+
     }
     /*
     private async Task StoreProducts(List<ProductDTO> prods)

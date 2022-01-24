@@ -28,6 +28,7 @@ namespace ProdMan_WASM
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(section.Value) });
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             
             

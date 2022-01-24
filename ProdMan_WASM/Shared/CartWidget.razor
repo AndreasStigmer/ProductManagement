@@ -1,0 +1,48 @@
+﻿
+@using ProdMan_WASM.Commerce
+@inject ICartService cartservice 
+
+<NavLink href="/cart">
+    <div class="p-2 badge me-2 mb-2">
+        <i class="text-light fa fa-shopping-cart"></i>
+        
+        @if(CartItems!=null )
+    {
+        
+          <span class="ms-2">@TotalCost :-</span>
+             <span class="badge rounded-pill bg-danger">@(CartItems.Select(q=>q.Quantity).Sum())</span>
+         
+    }
+    else
+    {
+        <span class="text-light">Shopping cart</span>
+    }
+</div>
+</NavLink>
+
+@code {
+
+    public List<CartItem> CartItems { get; set; }
+
+    public double TotalCost { 
+
+        get {
+            if (CartItems == null) { return 0; }
+            else
+            {
+                return CartItems.Select(t => t.Price * t.Quantity).Sum();
+            }
+        } 
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+        CartItems = await cartservice.GetCartItems();
+        cartservice.OnChange += async () => {
+            CartItems = await cartservice.GetCartItems();
+            StateHasChanged();
+        };
+    }
+
+
+}

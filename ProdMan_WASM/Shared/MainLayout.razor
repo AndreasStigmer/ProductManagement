@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
-
+@inject IAuthService authService
+@inject NavigationManager navman
 <div>
       <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
         <div class="container-fluid">
@@ -18,6 +19,12 @@
                     </li>
                 </ul>
                 <div>
+                    <AuthorizeView>
+                        <Authorized><span class="text-light">Welcome: @context.User.Identity.Name</span><a class="ms-3" href="#" @onclick="LogOut" >Logout</a></Authorized>
+                        <NotAuthorized><a href="/register">Register</a> <a class="ms-3" href="/login">Login</a></NotAuthorized>
+                    </AuthorizeView>
+                </div>
+                <div>
                     <CartWidget></CartWidget>
                 </div>
                 <form>
@@ -32,3 +39,14 @@
             @Body
         </div>
 
+
+        @code {
+
+    public async Task LogOut()
+    {
+        await authService.Logout();
+        navman.NavigateTo("/");
+
+
+    }
+        }

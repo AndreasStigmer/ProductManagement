@@ -9,7 +9,7 @@ namespace Model
     /// <summary>
     /// Reponseobjekt som skickas efter lyckad eller misslyckad registreringsprocess
     /// </summary>
-    public class UserRegistrationResponse
+    public class UserRegistrationResponseDTO
     {
         public bool IsRegistrationSuccessful { get; set; }
         public  List<string> ErrorMessages { get; set; }

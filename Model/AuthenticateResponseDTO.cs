@@ -16,6 +16,6 @@ namespace Model
         public string ErrorMesssage { get; set; }
         public string Token { get; set; }
 
-        public UserDTO UserDTO { get; set; }
+        public UserDTO UserDTO { get; set; } = new UserDTO();
     }
 }

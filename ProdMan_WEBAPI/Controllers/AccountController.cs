@@ -48,7 +48,11 @@ namespace ProdMan_WEBAPI.Controllers
 
             var signInResult = await signinManager.PasswordSignInAsync(authReq.Username, authReq.Password,false,false);
 
-            if (!signInResult.Succeeded) return Unauthorized("bad username or password");
+            if (!signInResult.Succeeded)
+            {
+                var uresp = new AuthenticateResponseDTO() { IsAuthenticationSuccess = false, ErrorMesssage = "Wrong username or password" };
+                return Unauthorized(uresp);
+            }
 
             var appUser = await userManager.FindByNameAsync(authReq.Username);
 

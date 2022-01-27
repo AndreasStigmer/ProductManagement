@@ -12,7 +12,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
-
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace ProdMan_WASM
 {
@@ -25,11 +25,15 @@ namespace ProdMan_WASM
             builder.RootComponents.Add<App>("#app");
             var section = builder.Configuration.GetSection("ApiBaseUri");
             //await Task.Delay(5000);
+
+            builder.Services.AddAuthorizationCore();
+            builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(section.Value) });
             builder.Services.AddBlazoredLocalStorage();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICartService, CartService>();
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            builder.Services.AddScoped<IAuthService, AuthService>();
             
             
             await builder.Build().RunAsync();

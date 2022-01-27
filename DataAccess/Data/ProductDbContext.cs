@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DataAccess.Data
 {
-    public class ProductDbContext:IdentityDbContext<ApplicationUser>
+    public class ProductDbContext:IdentityDbContext<IdentityUser>
     {
         public ProductDbContext(DbContextOptions<ProductDbContext> opt):base(opt)
         {
@@ -19,5 +19,7 @@ namespace DataAccess.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductImage> Images { get; set; }
         public DbSet<ProductProperty> Properties { get; set; }
+
+        public DbSet<ApplicationUser> ApplicationUser { get; set; }
     }
 }

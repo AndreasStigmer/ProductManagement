@@ -1,5 +1,6 @@
 ﻿@page "/login"
 @inject IAuthService authService
+@inject AuthenticationStateProvider authProvider
 @inject NavigationManager navman
 
 <EditForm Model="LoginReq" OnValidSubmit="LoginUser">
@@ -40,6 +41,8 @@
         if(response.IsAuthenticationSuccess)
         {
             ShowError = false;
+            ((AuthStateProvider)authProvider).NotifyUserLogin(response.Token);
+
             navman.NavigateTo("/");
         }else
         {

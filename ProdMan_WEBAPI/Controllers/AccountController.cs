@@ -89,6 +89,8 @@ namespace ProdMan_WEBAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(UserRequestDTO req)
         {
+
+            UserRegistrationResponseDTO response = new UserRegistrationResponseDTO(); ;
             if(ModelState.IsValid)
             {
                 var user = new ApplicationUser
@@ -102,16 +104,27 @@ namespace ProdMan_WEBAPI.Controllers
 
                 if(regResult.Succeeded)
                 {
-                    var storedUser = await userManager.FindByEmailAsync(req.Email);
-                    var roleReg = await userManager.AddToRoleAsync(storedUser, "Customer");
-                    return StatusCode(201);
+                    try { 
+                        var storedUser = await userManager.FindByEmailAsync(req.Email);
+                        var roleReg = await userManager.AddToRoleAsync(storedUser, "Customer");
+                        response.IsRegistrationSuccessful = true;
+                        return StatusCode(201,response);
+                    }catch(Exception ex)
+                    {
+                        response.IsRegistrationSuccessful = false;
+                        response.ErrorMessages.Add(ex.Message);
+                    }
                 }
-                return BadRequest("User could not be registred");
+                response.ErrorMessages = regResult.Errors.Select(e => e.Description).ToList();
+                response.IsRegistrationSuccessful = false;
+                return BadRequest(response);
 
             }
             else
             {
-                return BadRequest();
+                response.ErrorMessages.Add("Model is incomplete");
+                response.IsRegistrationSuccessful = false;
+                return BadRequest(response);
             }
         }
 

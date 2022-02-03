@@ -35,9 +35,22 @@ namespace ProdMan_WASM.Service
             
             var claims = JwtParser.ParseClaimsFromJwt(token);
             var authState = new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(claims, "jwtAuthType")));
-
+            
             return authState;
             
+        }
+
+        public void NotifyUserLogin(string token)
+        {
+            var principal=new ClaimsPrincipal(new ClaimsIdentity(JwtParser.ParseClaimsFromJwt(token),"jwtAuthType"));
+            var authState = Task.FromResult(new AuthenticationState(principal));
+            NotifyAuthenticationStateChanged(authState);
+        }
+
+        public void NotifyUserLogout()
+        {
+            var authState = Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity())));
+            NotifyAuthenticationStateChanged(authState);
         }
     }
 }

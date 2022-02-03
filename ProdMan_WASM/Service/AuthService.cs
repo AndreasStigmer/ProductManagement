@@ -1,5 +1,6 @@
 ﻿using Blazored.LocalStorage;
 using Model;
+using Newtonsoft.Json;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace ProdMan_WASM.Service
         }
         public async Task<AuthenticateResponseDTO> Login(AuthenticationRequestDTO req)
         {
-            var stringcontent = new StringContent(JsonSerializer.Serialize(req), System.Text.Encoding.UTF8, "application/json");
+            var stringcontent = new StringContent(System.Text.Json.JsonSerializer.Serialize(req), System.Text.Encoding.UTF8, "application/json");
             var response = await client.PostAsync("/api/account/login", stringcontent);
             var stringdata =await  response.Content.ReadAsStringAsync();
 
@@ -31,7 +32,7 @@ namespace ProdMan_WASM.Service
                 await localStorage.SetItemAsync("userdetails", AuthResponse.UserDTO);
                 client.DefaultRequestHeaders.Authorization =
                     new System.Net.Http.Headers.AuthenticationHeaderValue("bearer", AuthResponse.Token);
-                return new AuthenticateResponseDTO() { IsAuthenticationSuccess = true };
+                return new AuthenticateResponseDTO() { IsAuthenticationSuccess = true,Token=AuthResponse.Token };
 
             }else {
                 return new AuthenticateResponseDTO() { IsAuthenticationSuccess=false,ErrorMesssage=AuthResponse.ErrorMesssage };
@@ -44,9 +45,15 @@ namespace ProdMan_WASM.Service
             await localStorage.RemoveItemAsync("userdetails");
         }
 
-        public Task<UserRegistrationResponseDTO> RegisterUser(UserRequestDTO req)
+        public async Task<UserRegistrationResponseDTO> RegisterUser(UserRequestDTO req)
         {
-            throw new System.NotImplementedException();
+            var content=new StringContent(System.Text.Json.JsonSerializer.Serialize(req), System.Text.Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("/api/account/register", content);
+            var stringdata=await response.Content.ReadAsStringAsync();
+            var responseDto = JsonConvert.DeserializeObject<UserRegistrationResponseDTO>(stringdata);
+
+            return responseDto;
+
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject IAuthService authService
+@inject AuthenticationStateProvider authProvider
 @inject NavigationManager navman
 <div>
       <nav class="navbar navbar-expand navbar-dark bg-dark" aria-label="Second navbar example">
@@ -45,6 +46,7 @@
     public async Task LogOut()
     {
         await authService.Logout();
+        ((AuthStateProvider)authProvider).NotifyUserLogout();
         navman.NavigateTo("/");
 
 

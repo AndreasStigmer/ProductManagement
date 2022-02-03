@@ -1,5 +1,74 @@
-﻿<h3>Register</h3>
+﻿@page "/register"
+@inject IAuthService authService
+@inject NavigationManager navman
+
+<div class="mt-3 col-md-6 offset-3">
+<h3>Register User</h3>
+<EditForm Model="NewUser" OnValidSubmit="CreateUser">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <div>
+       @if(ShowErrors)
+            {
+                @foreach(var mess in ErrorMessages) {
+                     <p class="text-danger">@mess</p>
+                }
+            }
+        </div>
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Email address</label>
+    <InputText @bind-Value="NewUser.UserName"  type="email" class="form-control"  />
+    <ValidationMessage For="()=>NewUser.UserName"></ValidationMessage>
+  </div>
+
+  <div class="mb-3">
+    <label  class="form-label">Name</label>
+    <InputText @bind-Value="NewUser.Name"  class="form-control"  />
+   <ValidationMessage For="()=>NewUser.Name"></ValidationMessage>
+  </div>
+  <div class="mb-3">
+    <label  class="form-label">Phone</label>
+    <InputText @bind-Value="NewUser.PhoneNo"   class="form-control"   />
+    <ValidationMessage For="()=>NewUser.PhoneNo"></ValidationMessage>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Password</label>
+    <InputText @bind-Value="NewUser.Password" type="password"  class="form-control" />
+   <ValidationMessage For="()=>NewUser.Password"></ValidationMessage>
+  </div>
+   <div class="mb-3">
+    <label class="form-label">Confirm Password</label>
+    <InputText @bind-Value="NewUser.PasswordConfirm" type="password" class="form-control" />
+    <ValidationMessage For="()=>NewUser.PasswordConfirm"></ValidationMessage>
+  </div>
+
+ <div class="justify-content-sm-end">
+
+  <button type="submit" class="btn btn-primary">Register</button>
+  </div>
+</EditForm>
+</div>
 
 @code {
+    public UserRequestDTO NewUser { get; set; } = new UserRequestDTO();
 
+    public bool ShowErrors { get; set; }
+
+    public List<string> ErrorMessages { get; set; } = new List<string>();
+
+    public async Task CreateUser()
+    {
+         NewUser.Email = NewUser.UserName;
+        var response = await authService.RegisterUser(NewUser);
+       
+        if(response.IsRegistrationSuccessful)
+        {
+            ShowErrors = false;
+            navman.NavigateTo("/login");
+        }else
+        {
+            ShowErrors = true;
+            ErrorMessages = response.ErrorMessages;
+        }
+
+    }
 }

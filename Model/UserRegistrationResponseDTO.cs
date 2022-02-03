@@ -12,6 +12,6 @@ namespace Model
     public class UserRegistrationResponseDTO
     {
         public bool IsRegistrationSuccessful { get; set; }
-        public  List<string> ErrorMessages { get; set; }
+        public List<string> ErrorMessages { get; set; } = new List<string>();
     }
 }
